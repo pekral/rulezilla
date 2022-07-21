@@ -4,6 +4,7 @@
     <config name="installed_paths" value="../../slevomat/coding-standard"/>
     <arg name="extensions" value="php" />
     <arg name="encoding" value="utf-8" />
+    <arg name="report" value="summary"/>
     <arg name="colors"/>
     <arg name="tab-width" value="4"/>
 
