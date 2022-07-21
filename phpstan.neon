@@ -1,0 +1,2 @@
+includes:
+    - %rootDir%/../../../src/Phpstan/phpstan.neon

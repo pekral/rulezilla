@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<project name="Rulezilla" default="check">
+    <import file="src/Phing/build.xml"/>
+</project>
