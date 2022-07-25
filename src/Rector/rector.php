@@ -31,6 +31,7 @@ use Rector\CodeQuality\Rector\NotEqual\CommonNotEqualRector;
 use Rector\CodeQuality\Rector\Ternary\ArrayKeyExistsTernaryThenValueToCoalescingRector;
 use Rector\CodeQuality\Rector\Ternary\SimplifyTautologyTernaryRector;
 use Rector\CodeQuality\Rector\Ternary\UnnecessaryTernaryExpressionRector;
+use Rector\CodingStyle\Rector\ArrowFunction\StaticArrowFunctionRector;
 use Rector\DeadCode\Rector\StmtsAwareInterface\RemoveJustVariableAssignRector;
 use Rector\EarlyReturn\Rector\StmtsAwareInterface\ReturnEarlyIfVariableRector;
 use Rector\Php80\Rector\ClassMethod\AddParamBasedOnParentClassMethodRector;
@@ -38,7 +39,7 @@ use Rector\Php80\Rector\Identical\StrEndsWithRector;
 use Rector\Php80\Rector\Identical\StrStartsWithRector;
 use Rector\Php80\Rector\NotIdentical\StrContainsRector;
 use Rector\Php80\Rector\Switch_\ChangeSwitchToMatchRector;
-use Rector\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromStrictNativeFuncCallRector;
+use Rector\TypeDeclaration\Rector\ClassMethod\AddReturnTypeDeclarationBasedOnParentClassMethodRector;
 use Rector\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromStrictNewArrayRector;
 use Rector\TypeDeclaration\Rector\Property\TypedPropertyFromStrictSetUpRector;
 
@@ -72,7 +73,6 @@ return [
     UnusedForeachValueToArrayKeysRector::class,
     UnwrapSprintfOneArgumentRector::class,
     ReturnTypeFromStrictNewArrayRector::class,
-    ReturnTypeFromStrictNativeFuncCallRector::class,
     ReturnTypeFromStrictScalarReturnExprRector::class,
     ReturnEarlyIfVariableRector::class,
     RemoveJustVariableAssignRector::class,
@@ -82,4 +82,6 @@ return [
     StrContainsRector::class,
     StrEndsWithRector::class,
     StrStartsWithRector::class,
+    StaticArrowFunctionRector::class,
+    AddReturnTypeDeclarationBasedOnParentClassMethodRector::class,
 ];
