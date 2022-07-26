@@ -9,6 +9,12 @@
     <!-- ============================================ -->
     <target name="fix" depends="rector-fix, phpcs-fix"/>
     <!-- ============================================ -->
+    <!-- Target: phpstan                              -->
+    <!-- ============================================ -->
+    <target name="phpstan">
+        <exec command="DEBUG_MODE=off php -d memory_limit=8G vendor/bin/phpstan analyse src/ tests/ -c phpstan.neon" passthru="true" checkreturn="true" level="error"/>
+    </target>
+    <!-- ============================================ -->
     <!-- Target: lint                                 -->
     <!-- ============================================ -->
     <target name="lint">
