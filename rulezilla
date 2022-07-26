@@ -1,0 +1,28 @@
+#!/usr/bin/env php
+<?php declare(strict_types=1);
+
+require __DIR__.'/vendor/autoload.php';
+
+use Rulezilla\Commands\DefaultCommand;
+use Rulezilla\Commands\Phpcs;
+use Rulezilla\Commands\PhpcsFixer;
+use Rulezilla\Commands\Phpstan;
+use Symfony\Component\Console\Application;
+use Symfony\Component\Yaml\Yaml;
+
+$config = Yaml::parseFile('rulezilla.yaml');
+$config['rulezilla'] = [
+    'rootDir' => __DIR__,
+];
+
+$phpStanCommand = new Phpstan($config);
+$phpcsCommand = new Phpcs($config);
+$phpcsFixerCommand = new PhpcsFixer($config);
+
+$application = new Application();
+$application->add(new DefaultCommand($config, [$phpcsFixerCommand, $phpcsCommand, $phpStanCommand]));
+$application->add($phpStanCommand);
+$application->add($phpcsCommand);
+$application->add($phpcsFixerCommand);
+
+$application->run();

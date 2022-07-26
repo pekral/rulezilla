@@ -1,0 +1,7 @@
+commands:
+  phpstan:
+    directories: ['src', 'tests']
+    config: phpstan.neon
+  phpcs:
+    directories: ['src', 'tests']
+    ruleset: ruleset.xml
