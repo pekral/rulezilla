@@ -10,3 +10,5 @@ commands:
     ruleset: rector.php
   phpmnd:
     directories: ['src', 'tests']
+  phpcpd:
+    directories: ['src', 'tests']

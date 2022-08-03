@@ -4,6 +4,7 @@
 require __DIR__.'/vendor/autoload.php';
 
 use Rulezilla\Commands\DefaultCommand;
+use Rulezilla\Commands\Phpcpd;
 use Rulezilla\Commands\Phpcs;
 use Rulezilla\Commands\PhpcsFixer;
 use Rulezilla\Commands\Phpmnd;
@@ -18,6 +19,7 @@ $config['rulezilla'] = [
     'rootDir' => __DIR__,
 ];
 
+$phpcpdCommand = new Phpcpd($config);
 $phpmndCommand = new Phpmnd($config);
 $rectorCommand = new Rector($config);
 $rectorFixerCommand = new RectorFixer($config);
@@ -29,6 +31,7 @@ $application = new Application();
 $application->add(new DefaultCommand($config, [
         $rectorFixerCommand,
         $phpcsFixerCommand,
+        $phpcpdCommand,
         $phpmndCommand,
         $rectorCommand,
         $phpcsCommand,
@@ -40,5 +43,6 @@ $application->add($phpcsFixerCommand);
 $application->add($rectorCommand);
 $application->add($rectorFixerCommand);
 $application->add($phpmndCommand);
+$application->add($phpcpdCommand);
 
 $application->run();
