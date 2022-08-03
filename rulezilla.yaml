@@ -8,3 +8,5 @@ commands:
   rector:
     directories: ['src', 'tests']
     ruleset: rector.php
+  phpmnd:
+    directories: ['src', 'tests']
