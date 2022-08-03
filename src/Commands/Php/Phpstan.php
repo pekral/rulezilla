@@ -2,27 +2,32 @@
 
 declare(strict_types = 1);
 
-namespace Rulezilla\Commands;
+namespace Rulezilla\Commands\Php;
 
-final class RectorFixer extends RulezillaCommand implements Fixer
+use Rulezilla\Commands\RulezillaCommand;
+
+use function implode;
+use function sprintf;
+
+final class Phpstan extends RulezillaCommand
 {
 
     /**
      * @var string|null
      */
-    protected static $defaultName = 'rector:fix';
+    protected static $defaultName = 'phpstan:run';
 
     /**
      * @var string|null
      */
-    protected static $defaultDescription = 'Fix code base via Rector';
+    protected static $defaultDescription = 'Analyse code base via PHPStan';
 
     protected function getProcessCommand(): string
     {
         $targets = $this->getTargets();
 
         $commandParts = [
-            sprintf('php %s/vendor/bin/rector process %s --no-progress-bar', self::$rootDir, implode(' ', $targets)),
+            sprintf('php %s/vendor/bin/phpstan analyse %s --no-progress', self::$rootDir, implode(' ', $targets)),
         ];
 
         if (isset($this->getConfig()['config'])) {
@@ -34,12 +39,12 @@ final class RectorFixer extends RulezillaCommand implements Fixer
 
     protected function configure(): void
     {
-        $this->setHelp('This command run Rector fixer');
+        $this->setHelp('This command run PHPStan analyse');
     }
 
     protected function getConfigKey(): string
     {
-        return 'rector';
+        return 'phpstan';
     }
 
 }

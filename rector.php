@@ -6,7 +6,7 @@ use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
 
-    foreach (include(__DIR__ . '/src/Rector/rector.php') as $ruleClassName) {
+    foreach (include(__DIR__.'/src/Rules/Php/Rector/rector.php') as $ruleClassName) {
         $rectorConfig->rule($ruleClassName);
     }
 };
