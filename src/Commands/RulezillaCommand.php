@@ -37,6 +37,7 @@ abstract class RulezillaCommand extends Command
         assert($input->isInteractive());
 
         if ($resultCode !== Command::SUCCESS) {
+            $output->writeln($this->getProcessCommand());
             $output->writeln(implode(PHP_EOL, $cliOutput));
         } elseif ($this instanceof Fixer) {
             $output->writeln(sprintf('<info>%s | fix</info>', ucfirst(mb_strtolower($this->getConfigKey()))));
