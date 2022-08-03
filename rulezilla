@@ -4,11 +4,13 @@
 require __DIR__.'/vendor/autoload.php';
 
 use Rulezilla\Commands\DefaultCommand;
+use Rulezilla\Commands\Lint;
 use Rulezilla\Commands\Phpcpd;
 use Rulezilla\Commands\Phpcs;
 use Rulezilla\Commands\PhpcsFixer;
 use Rulezilla\Commands\Phpmnd;
 use Rulezilla\Commands\Phpstan;
+use Rulezilla\Commands\Phpunit;
 use Rulezilla\Commands\Rector;
 use Rulezilla\Commands\RectorFixer;
 use Symfony\Component\Console\Application;
@@ -19,6 +21,8 @@ $config['rulezilla'] = [
     'rootDir' => __DIR__,
 ];
 
+$lintCommand = new Lint($config);
+$phpunitCommand = new Phpunit($config);
 $phpcpdCommand = new Phpcpd($config);
 $phpmndCommand = new Phpmnd($config);
 $rectorCommand = new Rector($config);
@@ -31,11 +35,13 @@ $application = new Application();
 $application->add(new DefaultCommand($config, [
         $rectorFixerCommand,
         $phpcsFixerCommand,
+        $lintCommand,
         $phpcpdCommand,
         $phpmndCommand,
         $rectorCommand,
         $phpcsCommand,
         $phpStanCommand,
+        $phpunitCommand,
     ]));
 $application->add($phpStanCommand);
 $application->add($phpcsCommand);
@@ -44,5 +50,7 @@ $application->add($rectorCommand);
 $application->add($rectorFixerCommand);
 $application->add($phpmndCommand);
 $application->add($phpcpdCommand);
+$application->add($phpunitCommand);
+$application->add($lintCommand);
 
 $application->run();

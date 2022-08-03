@@ -12,3 +12,8 @@ commands:
     directories: ['src', 'tests']
   phpcpd:
     directories: ['src', 'tests']
+  phpunit:
+    directories: ['tests']
+    config: phpunit.xml
+  lint:
+    directories: ['src', 'tests']

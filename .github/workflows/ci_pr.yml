@@ -145,3 +145,59 @@ jobs:
 
       - name: "PHP - Phpcs"
         run: "php rulezilla phpcs:run"
+
+  phpunit:
+    name: "[PHP] - Coding standards"
+
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v2"
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          coverage: "none"
+          php-version: "8.0"
+
+      - name: "Cache dependencies"
+        uses: "actions/cache@v2"
+        with:
+          path: "~/.composer/cache"
+          key: "php-8.0-composer-${{ hashFiles('**/composer.json') }}"
+          restore-keys: "php-8.0-composer-"
+
+      - name: "Install dependencies"
+        run: "composer install --no-interaction --no-progress"
+
+      - name: "PHP - Phpunit"
+        run: "php rulezilla phpunit:run"
+
+  lint:
+    name: "[PHP] - Coding standards"
+
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v2"
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          coverage: "none"
+          php-version: "8.0"
+
+      - name: "Cache dependencies"
+        uses: "actions/cache@v2"
+        with:
+          path: "~/.composer/cache"
+          key: "php-8.0-composer-${{ hashFiles('**/composer.json') }}"
+          restore-keys: "php-8.0-composer-"
+
+      - name: "Install dependencies"
+        run: "composer install --no-interaction --no-progress"
+
+      - name: "PHP - Lint"
+        run: "php rulezilla lint:run"
