@@ -1,0 +1,147 @@
+# https://help.github.com/en/categories/automating-your-workflow-with-github-actions
+
+name: "Pull request - CI"
+
+on:
+  pull_request:
+
+jobs:
+  phpcpd:
+    name: "[PHP] - Copy paste detector"
+
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v2"
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          coverage: "none"
+          php-version: "8.0"
+
+      - name: "Cache dependencies"
+        uses: "actions/cache@v2"
+        with:
+          path: "~/.composer/cache"
+          key: "php-8.0-composer-${{ hashFiles('**/composer.json') }}"
+          restore-keys: "php-8.0-composer-"
+
+      - name: "Install dependencies"
+        run: "composer install --no-interaction --no-progress"
+
+      - name: "PHP - Phpcpd"
+        run: "php rulezilla phpcpd:run"
+
+  phpmnd:
+    name: "[PHP] - Magic number detector"
+
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v2"
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          coverage: "none"
+          php-version: "8.0"
+
+      - name: "Cache dependencies"
+        uses: "actions/cache@v2"
+        with:
+          path: "~/.composer/cache"
+          key: "php-8.0-composer-${{ hashFiles('**/composer.json') }}"
+          restore-keys: "php-8.0-composer-"
+
+      - name: "Install dependencies"
+        run: "composer install --no-interaction --no-progress"
+
+      - name: "PHP - Phpmnd"
+        run: "php rulezilla phpmnd:run"
+
+  phpstan:
+    name: "[PHP] - Static analysis"
+
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v2"
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          coverage: "none"
+          php-version: "8.0"
+
+      - name: "Cache dependencies"
+        uses: "actions/cache@v2"
+        with:
+          path: "~/.composer/cache"
+          key: "php-8.0-composer-${{ hashFiles('**/composer.json') }}"
+          restore-keys: "php-8.0-composer-"
+
+      - name: "Install dependencies"
+        run: "composer install --no-interaction --no-progress"
+
+      - name: "PHP - Phpstan"
+        run: "php rulezilla phpstan:run"
+
+  rector:
+    name: "[PHP] - Legacy code checker"
+
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v2"
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          coverage: "none"
+          php-version: "8.0"
+
+      - name: "Cache dependencies"
+        uses: "actions/cache@v2"
+        with:
+          path: "~/.composer/cache"
+          key: "php-8.0-composer-${{ hashFiles('**/composer.json') }}"
+          restore-keys: "php-8.0-composer-"
+
+      - name: "Install dependencies"
+        run: "composer install --no-interaction --no-progress"
+
+      - name: "PHP - Rector"
+        run: "php rulezilla rector:run"
+
+  phpcs:
+    name: "[PHP] - Coding standards"
+
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v2"
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          coverage: "none"
+          php-version: "8.0"
+
+      - name: "Cache dependencies"
+        uses: "actions/cache@v2"
+        with:
+          path: "~/.composer/cache"
+          key: "php-8.0-composer-${{ hashFiles('**/composer.json') }}"
+          restore-keys: "php-8.0-composer-"
+
+      - name: "Install dependencies"
+        run: "composer install --no-interaction --no-progress"
+
+      - name: "PHP - Phpcs"
+        run: "php rulezilla phpcs:run"
