@@ -5,3 +5,6 @@ commands:
   phpcs:
     directories: ['src', 'tests']
     ruleset: ruleset.xml
+  rector:
+    directories: ['src', 'tests']
+    ruleset: rector.php

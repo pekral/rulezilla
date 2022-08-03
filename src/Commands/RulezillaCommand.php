@@ -38,16 +38,11 @@ abstract class RulezillaCommand extends Command
 
         if ($resultCode !== Command::SUCCESS) {
             $output->writeln(implode(PHP_EOL, $cliOutput));
+        } elseif ($this instanceof Fixer) {
+            $output->writeln(sprintf('<info>%s | fix</info>', ucfirst(mb_strtolower($this->getConfigKey()))));
+            $output->writeln(implode(PHP_EOL, $cliOutput));
         } else {
-
-
-            if ($this instanceof Fixer) {
-                $output->writeln(sprintf('<info>%s | fix</info>', ucfirst(mb_strtolower($this->getConfigKey()))));
-                $output->writeln(implode(PHP_EOL, $cliOutput));
-
-            } else {
-                $output->writeln(sprintf('<info>✅ %s</info>', ucfirst(mb_strtolower($this->getConfigKey()))));
-            }
+            $output->writeln(sprintf('<info>✅ %s</info>', ucfirst(mb_strtolower($this->getConfigKey()))));
         }
 
         return $resultCode;
