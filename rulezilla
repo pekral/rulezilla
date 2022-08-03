@@ -9,6 +9,7 @@ use Rulezilla\Commands\Phpcs;
 use Rulezilla\Commands\PhpcsFixer;
 use Rulezilla\Commands\Phpmnd;
 use Rulezilla\Commands\Phpstan;
+use Rulezilla\Commands\Phpunit;
 use Rulezilla\Commands\Rector;
 use Rulezilla\Commands\RectorFixer;
 use Symfony\Component\Console\Application;
@@ -19,6 +20,7 @@ $config['rulezilla'] = [
     'rootDir' => __DIR__,
 ];
 
+$phpunitCommand = new Phpunit($config);
 $phpcpdCommand = new Phpcpd($config);
 $phpmndCommand = new Phpmnd($config);
 $rectorCommand = new Rector($config);
@@ -36,6 +38,7 @@ $application->add(new DefaultCommand($config, [
         $rectorCommand,
         $phpcsCommand,
         $phpStanCommand,
+        $phpunitCommand,
     ]));
 $application->add($phpStanCommand);
 $application->add($phpcsCommand);
@@ -44,5 +47,6 @@ $application->add($rectorCommand);
 $application->add($rectorFixerCommand);
 $application->add($phpmndCommand);
 $application->add($phpcpdCommand);
+$application->add($phpunitCommand);
 
 $application->run();
