@@ -6,6 +6,7 @@ namespace Rulezilla\Commands;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use function assert;
@@ -32,12 +33,17 @@ abstract class RulezillaCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $isDebugMode = $input->getOption('debug') !== null;
+
+        if ($isDebugMode) {
+            $output->writeln($this->getProcessCommand());
+        }
+
         exec($this->getProcessCommand(), $cliOutput, $resultCode);
 
         assert($input->isInteractive());
 
         if ($resultCode !== Command::SUCCESS) {
-            $output->writeln($this->getProcessCommand());
             $output->writeln(implode(PHP_EOL, $cliOutput));
         } elseif ($this instanceof Fixer) {
             $output->writeln(sprintf('<info>%s | fix</info>', ucfirst(mb_strtolower($this->getConfigKey()))));
@@ -62,6 +68,11 @@ abstract class RulezillaCommand extends Command
         return array_map(
             static fn (string $targetPath) => sprintf('%s/%s', self::$rootDir, $targetPath), $this->getConfig()['directories'],
         );
+    }
+
+    protected function configure(): void
+    {
+        $this->addOption('debug', 'd', InputOption::VALUE_OPTIONAL, 'Show debug info');
     }
 
 }

@@ -39,6 +39,8 @@ final class Rector extends RulezillaCommand
 
     protected function configure(): void
     {
+        parent::configure();
+
         $this->setHelp('This command run Rector refactoring');
     }
 

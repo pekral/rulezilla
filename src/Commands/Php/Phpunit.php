@@ -45,6 +45,8 @@ final class Phpunit extends RulezillaCommand
 
     protected function configure(): void
     {
+        parent::configure();
+
         $this->setHelp('Check PHP tests');
     }
 
