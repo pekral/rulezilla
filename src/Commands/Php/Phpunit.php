@@ -6,8 +6,12 @@ namespace Rulezilla\Commands\Php;
 
 use Rulezilla\Commands\RulezillaCommand;
 
+use function is_string;
+
 final class Phpunit extends RulezillaCommand
 {
+
+    private const DEFAULT_COVERAGE_FOLDER = 'storage/code-coverage';
 
     /**
      * @var string|null
@@ -21,18 +25,19 @@ final class Phpunit extends RulezillaCommand
 
     protected function getProcessCommand(): string
     {
-        $targets = $this->getTargets();
+        $config = $this->getConfig();
+        $isCoverageEnabled = isset($config['coverage']) && $config['coverage'] === true;
+        $commandParts = [];
 
-        $commandParts = [
-            sprintf(
-                'php %s/vendor/bin/phpunit %s --dont-report-useless-tests --strict-coverage --default-time-limit 0.75 --enforce-time-limit --colors auto',
-                self::$rootDir,
-                implode(' ', $targets),
-            ),
-        ];
+        if ($isCoverageEnabled) {
+            $commandParts = $this->createCoverageCommandParts();
+        } else {
+            $commandParts[] = $this->createBasePhpunitCommand();
+            $commandParts[] = '--no-coverage';
+        }
 
-        if (isset($this->getConfig()['config'])) {
-            $commandParts[] = sprintf('-c %s/%s', self::$rootDir, $this->getConfig()['config']);
+        if (isset($config['config'])) {
+            $commandParts[] = sprintf('-c %s/%s', self::$rootDir, $config['config']);
         }
 
         return implode(' ', $commandParts);
@@ -46,6 +51,31 @@ final class Phpunit extends RulezillaCommand
     protected function getConfigKey(): string
     {
         return 'phpunit';
+    }
+
+    private function createCoverageCommandParts(): array
+    {
+        $config = $this->getConfig();
+        $coverageFolder = isset($config['coverage_folder']) && is_string($config['coverage_folder'])
+            ? $config['coverage_folder']
+            : self::DEFAULT_COVERAGE_FOLDER;
+
+        return [
+            'ENV XDEBUG_MODE=coverage',
+            $this->createBasePhpunitCommand(),
+            sprintf('--coverage-html %s', $coverageFolder),
+        ];
+    }
+
+    private function createBasePhpunitCommand(): string
+    {
+        $targets = $this->getTargets();
+
+        return sprintf(
+            'php %s/vendor/bin/phpunit %s --dont-report-useless-tests --strict-coverage --default-time-limit 0.75 --enforce-time-limit --colors auto',
+            self::$rootDir,
+            implode(' ', $targets),
+        );
     }
 
 }
