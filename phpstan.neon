@@ -1,2 +1,2 @@
 includes:
-    - %rootDir%/../../../src/Phpstan/phpstan.neon
+    - %rootDir%/../../../src/Rules/Php/Phpstan/phpstan.neon

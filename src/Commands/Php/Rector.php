@@ -2,30 +2,32 @@
 
 declare(strict_types = 1);
 
-namespace Rulezilla\Commands;
+namespace Rulezilla\Commands\Php;
+
+use Rulezilla\Commands\RulezillaCommand;
 
 use function implode;
 use function sprintf;
 
-final class Phpstan extends RulezillaCommand
+final class Rector extends RulezillaCommand
 {
 
     /**
      * @var string|null
      */
-    protected static $defaultName = 'phpstan:run';
+    protected static $defaultName = 'rector:run';
 
     /**
      * @var string|null
      */
-    protected static $defaultDescription = 'Analyse code base via PHPStan';
+    protected static $defaultDescription = 'Refactoring code base via Rector';
 
     protected function getProcessCommand(): string
     {
         $targets = $this->getTargets();
 
         $commandParts = [
-            sprintf('php %s/vendor/bin/phpstan analyse %s --no-progress', self::$rootDir, implode(' ', $targets)),
+            sprintf('php %s/vendor/bin/rector process %s --dry-run --no-progress-bar', self::$rootDir, implode(' ', $targets)),
         ];
 
         if (isset($this->getConfig()['config'])) {
@@ -37,12 +39,12 @@ final class Phpstan extends RulezillaCommand
 
     protected function configure(): void
     {
-        $this->setHelp('This command run PHPStan analyse');
+        $this->setHelp('This command run Rector refactoring');
     }
 
     protected function getConfigKey(): string
     {
-        return 'phpstan';
+        return 'rector';
     }
 
 }

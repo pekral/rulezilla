@@ -42,7 +42,7 @@
   "extra": {
     "phpstan": {
       "includes": [
-        "src/Phpstan/extension.neon"
+        "src/Rules/Php/Phpstan/extension.neon"
       ]
     }
   }
