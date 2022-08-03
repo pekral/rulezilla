@@ -22,7 +22,7 @@ final class Lint extends RulezillaCommand
         $targets = $this->getTargets();
 
         $commandParts = [
-            sprintf('php %s/vendor/bin/parallel-lint --exclude .git --exclude vendor %s ', self::$rootDir, implode(' ', $targets)),
+            sprintf('php %s/vendor/bin/parallel-lint --no-progress --show-deprecated --exclude .git --exclude vendor %s ', self::$rootDir, implode(' ', $targets)),
         ];
 
         return implode(' ', $commandParts);
