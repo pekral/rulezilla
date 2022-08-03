@@ -73,7 +73,9 @@ abstract class RulezillaCommand extends Command
 
     private function printResult(OutputInterface $output, int $resultCode, array $cliOutput, bool $isDebugMode, Duration $duration, bool $isFixer): void
     {
-        if ($resultCode !== Command::SUCCESS && !$isFixer) {
+        $isSuccess = $resultCode !== Command::SUCCESS;
+
+        if ($isSuccess && !$isFixer) {
             $output->write('<error>[ERROR]</error>');
             $output->writeln(implode(PHP_EOL, $cliOutput));
 
@@ -81,7 +83,7 @@ abstract class RulezillaCommand extends Command
             $output->write('<info>[OK]</info>', true);
         }
 
-        if (!$isDebugMode) {
+        if (!$isDebugMode && $isSuccess) {
             return;
         }
 
