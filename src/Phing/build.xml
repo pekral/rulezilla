@@ -9,25 +9,10 @@
     <!-- ============================================ -->
     <target name="fix" depends="rector-fix, phpcs-fix"/>
     <!-- ============================================ -->
-    <!-- Target: phpstan                              -->
-    <!-- ============================================ -->
-    <target name="phpstan">
-        <exec command="DEBUG_MODE=off php -d memory_limit=8G vendor/bin/phpstan analyse src/ tests/ -c phpstan.neon" passthru="true" checkreturn="true" level="error"/>
-    </target>
-    <!-- ============================================ -->
     <!-- Target: lint                                 -->
     <!-- ============================================ -->
     <target name="lint">
         <exec command="DEBUG_MODE=off vendor/bin/parallel-lint src tests  --exclude vendor" passthru="true" checkreturn="true" level="error"/>
-    </target>
-    <!-- ============================================ -->
-    <!-- Target: phpcs                                -->
-    <!-- ============================================ -->
-    <target name="phpcs">
-        <exec command="DEBUG_MODE=off php vendor/bin/phpcs -sp --standard=ruleset.xml --extensions=php --encoding=utf-8 src tests" passthru="true" checkreturn="true"/>
-    </target>
-    <target name="phpcs-fix">
-        <exec command="php vendor/bin/phpcbf --standard=ruleset.xml -sp src/ tests/" passthru="true" checkreturn="false" level="error"/>
     </target>
     <!-- ============================================ -->
     <!-- Target: rector                               -->

@@ -1,0 +1,48 @@
+#!/usr/bin/env php
+<?php declare(strict_types=1);
+
+require __DIR__.'/vendor/autoload.php';
+
+use Rulezilla\Commands\DefaultCommand;
+use Rulezilla\Commands\Phpcpd;
+use Rulezilla\Commands\Phpcs;
+use Rulezilla\Commands\PhpcsFixer;
+use Rulezilla\Commands\Phpmnd;
+use Rulezilla\Commands\Phpstan;
+use Rulezilla\Commands\Rector;
+use Rulezilla\Commands\RectorFixer;
+use Symfony\Component\Console\Application;
+use Symfony\Component\Yaml\Yaml;
+
+$config = Yaml::parseFile('rulezilla.yaml');
+$config['rulezilla'] = [
+    'rootDir' => __DIR__,
+];
+
+$phpcpdCommand = new Phpcpd($config);
+$phpmndCommand = new Phpmnd($config);
+$rectorCommand = new Rector($config);
+$rectorFixerCommand = new RectorFixer($config);
+$phpStanCommand = new Phpstan($config);
+$phpcsCommand = new Phpcs($config);
+$phpcsFixerCommand = new PhpcsFixer($config);
+
+$application = new Application();
+$application->add(new DefaultCommand($config, [
+        $rectorFixerCommand,
+        $phpcsFixerCommand,
+        $phpcpdCommand,
+        $phpmndCommand,
+        $rectorCommand,
+        $phpcsCommand,
+        $phpStanCommand,
+    ]));
+$application->add($phpStanCommand);
+$application->add($phpcsCommand);
+$application->add($phpcsFixerCommand);
+$application->add($rectorCommand);
+$application->add($rectorFixerCommand);
+$application->add($phpmndCommand);
+$application->add($phpcpdCommand);
+
+$application->run();
