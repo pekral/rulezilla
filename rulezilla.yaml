@@ -16,6 +16,6 @@ commands:
     directories: ['tests']
     config: phpunit.xml
     coverage: false
-    coverage_folder: 'xxx'
+    #coverage_folder: 'xxx'
   lint:
     directories: ['src', 'tests']
