@@ -147,7 +147,7 @@ jobs:
         run: "php rulezilla phpcs:run"
 
   phpunit:
-    name: "[PHP] - Coding standards"
+    name: "[PHP] - Tests"
 
     runs-on: "ubuntu-latest"
 
@@ -175,7 +175,7 @@ jobs:
         run: "php rulezilla phpunit:run"
 
   lint:
-    name: "[PHP] - Coding standards"
+    name: "[PHP] - Lint"
 
     runs-on: "ubuntu-latest"
 
