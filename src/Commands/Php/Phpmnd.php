@@ -32,6 +32,8 @@ final class Phpmnd extends RulezillaCommand
 
     protected function configure(): void
     {
+        parent::configure();
+
         $this->setHelp('This command check magic numbers in your code base');
     }
 

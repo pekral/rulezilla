@@ -35,6 +35,13 @@ class PhpcsFixer extends RulezillaCommand implements Fixer
         return implode(' ', $commandParts);
     }
 
+    protected function configure(): void
+    {
+        parent::configure();
+
+        $this->setHelp('This command run PHP coding standard fixer');
+    }
+
     protected function getConfigKey(): string
     {
         return 'phpcs';

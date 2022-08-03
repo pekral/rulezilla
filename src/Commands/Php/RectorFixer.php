@@ -37,6 +37,8 @@ final class RectorFixer extends RulezillaCommand implements Fixer
 
     protected function configure(): void
     {
+        parent::configure();
+
         $this->setHelp('This command run Rector fixer');
     }
 

@@ -32,6 +32,8 @@ final class Phpcpd extends RulezillaCommand
 
     protected function configure(): void
     {
+        parent::configure();
+
         $this->setHelp('This command check duplicated code in your code base');
     }
 

@@ -34,6 +34,13 @@ class Phpcs extends RulezillaCommand
         return implode(' ', $commandParts);
     }
 
+    protected function configure(): void
+    {
+        parent::configure();
+
+        $this->setHelp('This command run PHP coding standards checker');
+    }
+
     protected function getConfigKey(): string
     {
         return 'phpcs';

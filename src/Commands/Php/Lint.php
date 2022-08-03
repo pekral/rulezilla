@@ -32,6 +32,8 @@ final class Lint extends RulezillaCommand
 
     protected function configure(): void
     {
+        parent::configure();
+
         $this->setHelp('PHP lint code in your code base');
     }
 
