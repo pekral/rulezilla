@@ -11,7 +11,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use function assert;
 use function mb_strtolower;
 use function sprintf;
 use function ucfirst;
@@ -39,7 +38,6 @@ abstract class RulezillaCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        assert($input->isInteractive());
         $isFixer = $this instanceof Fixer;
         $isDebugMode = $input->getOption('debug') !== null;
 

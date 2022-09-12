@@ -8,7 +8,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use function in_array;
+use function collect;
 
 final class DefaultCommand extends RulezillaCommand
 {
@@ -34,14 +34,9 @@ final class DefaultCommand extends RulezillaCommand
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $resultCodes = [];
-
-        foreach ($this->commands as $command)
-        {
-            $resultCodes[] = $command->execute($input, $output);
-        }
-
-        return in_array(Command::FAILURE, $resultCodes, true) ? Command::FAILURE : Command::SUCCESS;
+        return collect($this->commands)->map(static fn (Command $command): int => $command->execute($input, $output))
+            ->filter(static fn (int $statusCode): bool => $statusCode === Command::FAILURE)
+            ->count() > 0 ? Command::FAILURE : Command::SUCCESS;
     }
 
     protected function getProcessCommand(): string
