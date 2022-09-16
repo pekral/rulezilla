@@ -1,7 +1,10 @@
 includes:
     - %rootDir%/../../../src/Rules/Php/Phpstan/phpstan.neon
 parameters:
+    checkGenericClassInNonGenericObjectType: false
     strictRules:
         allRules: true
+    ignoreErrors:
+         - '#Parameter \#1 \$callback of method Illuminate\\Support\\Collection.*#'
     excludePaths:
         - src/Rules/Php/Phpstan/Rule

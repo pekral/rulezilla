@@ -45,9 +45,8 @@ final class Runner
      */
     public function run(): int
     {
-        $commands = array_merge($this->getFixersCommands(), $this->getCheckersCommands());
-        $this->console->addCommands($commands);
-        $this->console->add(new DefaultCommand($this->config, $commands));
+        $this->console->addCommands(array_merge($this->getFixersCommands(), $this->getCheckersCommands()));
+        $this->console->add(new DefaultCommand($this->config, $this->getFixersCommands(), $this->getCheckersCommands()));
         $this->console->setDefaultCommand(DefaultCommand::class);
 
         return $this->console->run();

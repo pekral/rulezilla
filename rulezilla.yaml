@@ -1,3 +1,4 @@
+parallel: true
 stopOnFailure: true
 commands:
   phpstan:
