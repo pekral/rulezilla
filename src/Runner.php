@@ -36,8 +36,7 @@ final class Runner
      */
     public function __construct(private string $rootDir)
     {
-        $this->config = $this->parseConfig();
-        $this->config['rulezilla']['rootDir'] = $this->rootDir;
+        $this->initConfig();
         $this->console = new Application();
     }
 
@@ -54,7 +53,10 @@ final class Runner
         return $this->console->run();
     }
 
-    private function parseConfig(): array
+    /**
+     * @throws \Rulezilla\Exceptions\InvalidConfig
+     */
+    private function initConfig(): void
     {
         $parsedConfig = Yaml::parseFile(self::CONFIG_DEFAULT_FILE);
 
@@ -62,9 +64,14 @@ final class Runner
             throw new InvalidConfig(sprintf('Invalid config file content in %s', self::CONFIG_DEFAULT_FILE));
         }
 
-        return $parsedConfig;
+        $parsedConfig['rulezilla']['rootDir'] = $this->rootDir;
+
+        $this->config = $parsedConfig;
     }
 
+    /**
+     * @return array<\Symfony\Component\Console\Command\Command>
+     */
     private function getCheckersCommands(): array
     {
         return [
@@ -78,6 +85,9 @@ final class Runner
         ];
     }
 
+    /**
+     * @return array<\Symfony\Component\Console\Command\Command>
+     */
     private function getFixersCommands(): array
     {
         return [

@@ -25,7 +25,7 @@ final class DefaultCommand extends RulezillaCommand
 
     /**
      * @param array $config
-     * @param array<\Rulezilla\Commands\RulezillaCommand> $commands
+     * @param array<\Symfony\Component\Console\Command\Command> $commands
      */
     public function __construct(array $config, private array $commands)
     {
