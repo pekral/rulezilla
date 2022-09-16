@@ -1,11 +1,13 @@
 # Rulezilla
 List of rules for writing clear code in PHP.
-
 ## Installation
 ```
 composer require --dev pekral/rulezilla
 ```
-
+## Config
+```
+stopOnFailure: (bool) value // Stop processes if last excuted command return fail sttaus code
+```
 ## Supported tools
 ### Lint
 https://github.com/php-parallel-lint/PHP-Parallel-Lint

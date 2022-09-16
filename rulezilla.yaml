@@ -1,3 +1,4 @@
+stopOnFailure: true
 commands:
   phpstan:
     directories: ['src', 'tests']

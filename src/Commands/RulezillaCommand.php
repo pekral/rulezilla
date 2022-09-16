@@ -46,7 +46,7 @@ abstract class RulezillaCommand extends Command
         exec($this->getProcessCommand(), $cliOutput, $resultCode);
         $this->printResult($output, $resultCode, $cliOutput, $isDebugMode, $this->timer->stop(), $isFixer);
 
-        return $resultCode;
+        return $isFixer ? Command::SUCCESS :$resultCode;
     }
 
     protected function getConfig(): array
