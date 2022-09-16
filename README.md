@@ -7,6 +7,7 @@ composer require --dev pekral/rulezilla
 ## Config
 ```
 stopOnFailure: (bool) value // Stop processes if last excuted command return fail sttaus code
+parallel: (bool) value // Run commands in parallel threads
 ```
 ## Supported tools
 ### Lint
