@@ -1,3 +1,5 @@
 parameters:
     level: max
     checkMissingIterableValueType: false
+rules:
+    - Rulezilla\Rules\Php\Phpstan\Rule\ClassMustBeDefinedAsFinal

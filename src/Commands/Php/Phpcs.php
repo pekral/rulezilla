@@ -6,7 +6,7 @@ namespace Rulezilla\Commands\Php;
 
 use Rulezilla\Commands\RulezillaCommand;
 
-class Phpcs extends RulezillaCommand
+final class Phpcs extends RulezillaCommand
 {
 
     /**
