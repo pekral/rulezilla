@@ -7,7 +7,7 @@ namespace Rulezilla\Commands\Php;
 use Rulezilla\Commands\Fixer;
 use Rulezilla\Commands\RulezillaCommand;
 
-class PhpcsFixer extends RulezillaCommand implements Fixer
+final class PhpcsFixer extends RulezillaCommand implements Fixer
 {
 
     /**

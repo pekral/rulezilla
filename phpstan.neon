@@ -1,2 +1,5 @@
 includes:
     - %rootDir%/../../../src/Rules/Php/Phpstan/phpstan.neon
+parameters:
+    excludePaths:
+        - src/Rules/Php/Phpstan/Rule
