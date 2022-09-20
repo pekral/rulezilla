@@ -12,25 +12,36 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Throwable;
 
 use function collect;
+use function exec;
+use function in_array;
 use function React\Async\parallel;
 use function sprintf;
 
 abstract class RulezillaCommand extends Command
 {
 
-    protected bool $parallel;
+    private const STATUS_CODE_MAX_LIMIT_VALUE = 2;
+
+    protected bool $stopOnFailure = true;
+
+    protected Timer $timer;
+
+    protected static bool $parallel = false;
+
+    protected static bool $debug = false;
 
     protected static string $rootDir;
+
+    protected static bool $isFastCheck = false;
 
     /**
      * @var array<\Symfony\Component\Console\Command\Command>
      */
-    private array $allCommands = [];
-
-    private Timer $timer;
+    private array $allCommands;
 
     abstract protected function getProcessCommand(): string;
 
@@ -42,20 +53,33 @@ abstract class RulezillaCommand extends Command
 
         $this->allCommands = array_merge($fixers, $checkers);
         self::$rootDir = $config['rulezilla']['rootDir'];
-        $this->parallel = isset($this->config['parallel']) && (bool) $this->config['parallel'] === true;
         $this->timer = new Timer();
+        $this->stopOnFailure = isset($this->config['stopOnFailure']) && (bool) $this->config['stopOnFailure'] === true;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $isFixer = $this instanceof Fixer;
-
-        OutputPrinter::printHeader($output, $isFixer, $this->parallel, $this->getConfigKey());
+        $this->initProperties($input);
+        $output = new SymfonyStyle($input, $output);
+        OutputPrinter::printHeader($output, $isFixer, self::$parallel, $this->getConfigKey(), self::$isFastCheck);
         $this->timer->start();
         exec($this->getProcessCommand(), $cliOutput, $resultCode);
-        OutputPrinter::printResult($output, $resultCode, $cliOutput, $input->getOption('debug') !== null, $this->timer->stop(), $isFixer, $this->parallel, $this->getProcessCommand());
+        $isOK = $isFixer && $resultCode < self::STATUS_CODE_MAX_LIMIT_VALUE;
+        OutputPrinter::printResult(
+            $output,
+            $resultCode,
+            $cliOutput,
+            self::$debug,
+            $this->timer->stop(),
+            $isFixer,
+            self::$parallel,
+            $this->getProcessCommand(),
+            $this->stopOnFailure,
+            $isOK,
+        );
 
-        return $isFixer ? Command::SUCCESS : $resultCode;
+        return $isOK ? Command::SUCCESS : $resultCode;
     }
 
     protected function getConfig(): array
@@ -64,18 +88,33 @@ abstract class RulezillaCommand extends Command
     }
 
     /**
-     * @return array<string>
+     * @return array
      */
     protected function getTargets(): array
     {
-        return array_map(
-            static fn (string $targetPath) => sprintf('%s/%s', self::$rootDir, $targetPath), $this->getConfig()['directories'],
-        );
+        if (self::$isFastCheck && !in_array($this->getConfigKey(), ['phpunit', 'phpstan'], true)) {
+            exec('git diff --name-only --diff-filter=d origin/master | grep -F .php', $diffFiles);
+
+            $targets = collect($diffFiles);
+        } else {
+            $targets = collect($this->getConfig()['directories']);
+        }
+
+        return $targets->map(static fn (string $targetPath): string => sprintf('%s/%s', self::$rootDir, $targetPath))->toArray();
     }
 
     protected function configure(): void
     {
-        $this->addOption('debug', 'd', InputOption::VALUE_OPTIONAL, 'Show debug info');
+        $this->addOption('debug', null, InputOption::VALUE_NONE, 'Show debug information');
+        $this->addOption('fast', null, InputOption::VALUE_NONE, 'Check only changed files');
+        $this->addOption('parallel', null, InputOption::VALUE_NONE, 'Run commands parallel');
+    }
+
+    private function initProperties(InputInterface $input): void
+    {
+        self::$isFastCheck = (bool) $input->getOption('fast');
+        self::$parallel = (bool) $input->getOption('parallel');
+        self::$debug = (bool) $input->getOption('debug');
     }
 
     private function executeFixers(InputInterface $input, OutputInterface $output): void
@@ -89,7 +128,7 @@ abstract class RulezillaCommand extends Command
     protected function executeParallel(InputInterface $input, OutputInterface $output): int
     {
         $finalExitCode = Command::SUCCESS;
-
+        $output = new SymfonyStyle($input, $output);
         $this->executeFixers($input, $output);
 
         parallel([
@@ -117,13 +156,13 @@ abstract class RulezillaCommand extends Command
         ])->then(function (array $exitCodes) use (&$finalExitCode) {
             $finalExitCode = $this->getFinalExitCode(collect($exitCodes));
         }, static function (Throwable $e) use ($output) {
-            $output->writeln($e->getMessage());
+            $output->getErrorStyle()->error($e->getMessage());
         });
 
         if ($finalExitCode === Command::SUCCESS) {
-            $output->writeln(OutputPrinter::SUCCESS_MESSAGE);
+            $output->success(OutputPrinter::SUCCESS_MESSAGE);
         } else {
-            $output->writeln(OutputPrinter::ERROR_MESSAGE);
+            $output->getErrorStyle()->error(OutputPrinter::ERROR_MESSAGE);
         }
 
         return $finalExitCode;
@@ -137,8 +176,10 @@ abstract class RulezillaCommand extends Command
 
     protected function executeWithStopOnFailure(InputInterface $input, OutputInterface $output): int
     {
+        $isFixer = $this instanceof Fixer;
+
         foreach ($this->allCommands as $command) {
-            if ($command->execute($input, $output) !== Command::SUCCESS) {
+            if (!$isFixer && $command->execute($input, $output) !== Command::SUCCESS) {
                 return Command::FAILURE;
             }
         }

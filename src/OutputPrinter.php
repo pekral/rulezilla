@@ -6,25 +6,27 @@ namespace Rulezilla;
 
 use SebastianBergmann\Timer\Duration;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 use function implode;
 use function is_array;
-use function ucfirst;
+use function mb_strtoupper;
+use function sprintf;
 
 use const PHP_EOL;
 
 final class OutputPrinter
+
 {
 
-    public const ERROR_MESSAGE = '<error>Oops! There are some errors. I believe you in fixing! 👿</error>';
-    public const SUCCESS_MESSAGE = '<info>It`s looks so good! Good work! 👍</info>';
+    public const ERROR_MESSAGE = '👿 Oops! There are some errors. I believe you in fixing!';
+    public const SUCCESS_MESSAGE = '👍 It`s looks so good! Good work!';
 
-    public static function printResult(OutputInterface $output, int $resultCode, array $cliOutput, bool $isDebugMode, Duration $duration, bool $isFixer, bool $parallel, string $processCommand): void
+    public static function printResult(SymfonyStyle $output, int $resultCode, array $cliOutput, bool $isDebugMode, Duration $duration, bool $isFixer, bool $parallel, string $processCommand, bool $stopOnFailure, bool $isOK): void
     {
         $isSuccess = $resultCode === Command::SUCCESS;
 
-        self::printCliOutput($output, $isSuccess, $isFixer, $parallel, $cliOutput, $duration, $isDebugMode);
+        self::printCliOutput($output, $isSuccess, $isFixer, $parallel, $cliOutput, $duration, $isDebugMode, $stopOnFailure, $isOK);
 
         if ((!$isDebugMode && !$isSuccess) || $parallel) {
             return;
@@ -34,35 +36,42 @@ final class OutputPrinter
             return;
         }
 
-        $output->writeln('<info>[DEBUG]</info> [Command] '. $processCommand);
+        $output->note(sprintf('[Command] %s', $processCommand));
 
     }
 
-    public static function printHeader(OutputInterface $output, bool $isFixer, bool $parallel, string $configKey): void
+    public static function printHeader(SymfonyStyle $output, bool $isFixer, bool $parallel, string $configKey, bool $isFastCheck): void
     {
         if ($parallel) {
             return ;
         }
 
-        $output->write(ucfirst(mb_strtolower($configKey)));
-        $output->write($isFixer ? ' fixing errors ' : ' checking code ');
-        $output->write('it will take a while ... ');
+        $output->title(
+            sprintf('%s [%s%s:%s] it will take a while ...', $isFixer ? '🛠️ ' : '🔎', $isFastCheck ? 'FAST | ' : null, mb_strtoupper($configKey), $isFixer ? 'FIX' : 'CHECK'),
+        );
     }
 
-    private static function printCliOutput(OutputInterface $output, bool $isSuccess, bool $isFixer, bool $parallel, array|string $cliOutput, Duration $duration, bool $isDebugMode): void
+    public static function getDurationString(Duration $duration): string
+    {
+        return sprintf('[Executing time] %s', $duration->asString());
+    }
+
+    private static function printCliOutput(SymfonyStyle $output, bool $isSuccess, bool $isFixer, bool $parallel, array|string $cliOutput, Duration $duration, bool $isDebugMode, bool $stopOnFailure, bool $isOK): void
     {
         if ($parallel && !$isFixer && !$isSuccess) {
-            $output->writeln($cliOutput);
+            self::printRawCliOutput($output, $cliOutput);
         } elseif (!$parallel) {
 
             if ($isSuccess) {
-                $output->write(sprintf('%s [Executing time] %s', self::SUCCESS_MESSAGE, $duration->asString()), true);
-            } else {
+                $output->success(sprintf('%s %s', self::SUCCESS_MESSAGE, self::getDurationString($duration)));
+            } elseif (!$isOK) {
                 self::printRawCliOutput($output, $cliOutput);
-                $output->writeln(self::ERROR_MESSAGE);
+                $output->getErrorStyle()->error(sprintf('%s %s', self::ERROR_MESSAGE, self::getDurationString($duration)));
+            } else {
+                $output->success(sprintf('%s %s', self::SUCCESS_MESSAGE, self::getDurationString($duration)));
             }
 
-            if ($isDebugMode) {
+            if ($isDebugMode && !$stopOnFailure) {
                 self::printRawCliOutput($output, $cliOutput);
             }
 
@@ -70,7 +79,7 @@ final class OutputPrinter
 
     }
 
-    private static function printRawCliOutput(OutputInterface $output, array|string $cliOutput): void
+    private static function printRawCliOutput(SymfonyStyle $output, array|string $cliOutput): void
     {
         $output->writeln(is_array($cliOutput) ? implode(PHP_EOL, $cliOutput) : $cliOutput);
     }
