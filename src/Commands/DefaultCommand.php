@@ -37,9 +37,7 @@ final class DefaultCommand extends RulezillaCommand
             return $this->executeParallel($input, $output);
         }
 
-        $stopOnFailure = isset($this->config['stopOnFailure']) && (bool) $this->config['stopOnFailure'] === true;
-
-        return $stopOnFailure
+        return isset($this->config['stopOnFailure']) && (bool) $this->config['stopOnFailure'] === true
             ? $this->executeWithStopOnFailure($input, $output)
             : $this->executeWithoutStopOnFailure($input, $output);
     }

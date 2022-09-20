@@ -14,18 +14,13 @@ use Rulezilla\Commands\Php\Phpstan;
 use Rulezilla\Commands\Php\Phpunit;
 use Rulezilla\Commands\Php\Rector;
 use Rulezilla\Commands\Php\RectorFixer;
-use Rulezilla\Exceptions\InvalidConfig;
+use Rulezilla\Config\ConfigFacade;
 use Symfony\Component\Console\Application;
-use Symfony\Component\Yaml\Yaml;
 
 use function array_merge;
-use function is_array;
-use function sprintf;
 
 final class Runner
 {
-
-    private const CONFIG_DEFAULT_FILE = 'rulezilla.yaml';
 
     private array $config;
 
@@ -34,10 +29,10 @@ final class Runner
     /**
      * @throws \Rulezilla\Exceptions\InvalidConfig
      */
-    public function __construct(private string $rootDir)
+    public function __construct(string $rootDir)
     {
-        $this->initConfig();
         $this->console = new Application();
+        $this->config = (new ConfigFacade($rootDir))->parseConfig();
     }
 
     /**
@@ -45,27 +40,16 @@ final class Runner
      */
     public function run(): int
     {
-        $this->console->addCommands(array_merge($this->getFixersCommands(), $this->getCheckersCommands()));
-        $this->console->add(new DefaultCommand($this->config, $this->getFixersCommands(), $this->getCheckersCommands()));
+        $this->console->addCommands(
+            array_merge(
+                $this->getFixersCommands(),
+                $this->getCheckersCommands(),
+                [new DefaultCommand($this->config, $this->getFixersCommands(), $this->getCheckersCommands())],
+            ),
+        );
         $this->console->setDefaultCommand(DefaultCommand::class);
 
         return $this->console->run();
-    }
-
-    /**
-     * @throws \Rulezilla\Exceptions\InvalidConfig
-     */
-    private function initConfig(): void
-    {
-        $parsedConfig = Yaml::parseFile(self::CONFIG_DEFAULT_FILE);
-
-        if (!is_array($parsedConfig)) {
-            throw new InvalidConfig(sprintf('Invalid config file content in %s', self::CONFIG_DEFAULT_FILE));
-        }
-
-        $parsedConfig['rulezilla']['rootDir'] = $this->rootDir;
-
-        $this->config = $parsedConfig;
     }
 
     /**
