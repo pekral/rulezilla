@@ -4,8 +4,10 @@ declare(strict_types = 1);
 
 namespace Rulezilla\Commands;
 
+use Rulezilla\OutputPrinter;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 final class DefaultCommand extends RulezillaCommand
 {
@@ -25,19 +27,25 @@ final class DefaultCommand extends RulezillaCommand
      * @param array<\Symfony\Component\Console\Command\Command> $fixers
      * @param array<\Symfony\Component\Console\Command\Command> $checkers
      */
-    public function __construct(private array $config, array $fixers, array $checkers)
+    public function __construct(array $config, array $fixers, array $checkers)
     {
         parent::__construct($config, $fixers, $checkers);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $output = new SymfonyStyle($input, $output);
+        $parallel = (bool) $input->getOption('parallel');
 
-        if ($this->parallel) {
-            return $this->executeParallel($input, $output);
+        if ($parallel) {
+            $this->timer->start();
+            $result = $this->executeParallel($input, $output);
+            $output->info(OutputPrinter::getDurationString($this->timer->stop()));
+
+            return $result;
         }
 
-        return isset($this->config['stopOnFailure']) && (bool) $this->config['stopOnFailure'] === true
+        return $this->stopOnFailure
             ? $this->executeWithStopOnFailure($input, $output)
             : $this->executeWithoutStopOnFailure($input, $output);
     }
