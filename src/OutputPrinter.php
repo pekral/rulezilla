@@ -24,7 +24,7 @@ final class OutputPrinter
     {
         $isSuccess = $resultCode === Command::SUCCESS;
 
-        self::printCliOutput($output, $isSuccess, $isFixer, $parallel, $cliOutput, $duration);
+        self::printCliOutput($output, $isSuccess, $isFixer, $parallel, $cliOutput, $duration, $isDebugMode);
 
         if ((!$isDebugMode && !$isSuccess) || $parallel) {
             return;
@@ -49,7 +49,7 @@ final class OutputPrinter
         $output->write('it will take a while ... ');
     }
 
-    private static function printCliOutput(OutputInterface $output, bool $isSuccess, bool $isFixer, bool $parallel, array|string $cliOutput, Duration $duration): void
+    private static function printCliOutput(OutputInterface $output, bool $isSuccess, bool $isFixer, bool $parallel, array|string $cliOutput, Duration $duration, bool $isDebugMode): void
     {
         if ($parallel && !$isFixer && !$isSuccess) {
             $output->writeln($cliOutput);
@@ -58,12 +58,21 @@ final class OutputPrinter
             if ($isSuccess) {
                 $output->write(sprintf('%s [Executing time] %s', self::SUCCESS_MESSAGE, $duration->asString()), true);
             } else {
-                $output->writeln(is_array($cliOutput) ? implode(PHP_EOL, $cliOutput) : $cliOutput);
+                self::printRawCliOutput($output, $cliOutput);
                 $output->writeln(self::ERROR_MESSAGE);
+            }
+
+            if ($isDebugMode) {
+                self::printRawCliOutput($output, $cliOutput);
             }
 
         }
 
+    }
+
+    private static function printRawCliOutput(OutputInterface $output, array|string $cliOutput): void
+    {
+        $output->writeln(is_array($cliOutput) ? implode(PHP_EOL, $cliOutput) : $cliOutput);
     }
 
 }

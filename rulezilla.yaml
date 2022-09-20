@@ -1,5 +1,5 @@
-parallel: true
-stopOnFailure: true
+parallel: false
+stopOnFailure: false
 commands:
   phpstan:
     directories: ['src', 'tests']
@@ -17,7 +17,7 @@ commands:
   phpunit:
     directories: ['tests']
     config: phpunit.xml
-    coverage: false
+    coverage: true
     #coverage_folder: 'xxx'
   lint:
     directories: ['src', 'tests']

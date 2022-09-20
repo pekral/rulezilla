@@ -11,7 +11,7 @@ use function is_string;
 final class Phpunit extends RulezillaCommand
 {
 
-    private const DEFAULT_COVERAGE_FOLDER = 'storage/code-coverage';
+    private const DEFAULT_COVERAGE_FOLDER = 'reports/code-coverage';
 
     /**
      * @var string|null
