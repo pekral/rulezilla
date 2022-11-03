@@ -27,21 +27,18 @@ abstract class RulezillaCommand extends Command
     private const STATUS_CODE_MAX_LIMIT_VALUE = 2;
 
     protected bool $stopOnFailure = true;
-
     protected Timer $timer;
-
     protected static bool $parallel = false;
-
     protected static bool $debug = false;
-
     protected static string $rootDir;
-
     protected static bool $isFastCheck = false;
 
     /**
      * @var array<\Symfony\Component\Console\Command\Command>
      */
     private array $allCommands;
+
+    private static bool $isFixer = false;
 
     abstract protected function getProcessCommand(): string;
 
@@ -53,26 +50,26 @@ abstract class RulezillaCommand extends Command
 
         $this->allCommands = array_merge($fixers, $checkers);
         self::$rootDir = $config['rulezilla']['rootDir'];
+        self::$isFixer = $this instanceof Fixer;
         $this->timer = new Timer();
         $this->stopOnFailure = isset($this->config['stopOnFailure']) && (bool) $this->config['stopOnFailure'] === true;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $isFixer = $this instanceof Fixer;
-        $this->initProperties($input);
         $output = new SymfonyStyle($input, $output);
-        OutputPrinter::printHeader($output, $isFixer, self::$parallel, $this->getConfigKey(), self::$isFastCheck);
+        $this->initProperties($input);
+        OutputPrinter::printHeader($output, self::$isFixer, self::$parallel, $this->getConfigKey(), self::$isFastCheck);
         $this->timer->start();
         exec($this->getProcessCommand(), $cliOutput, $resultCode);
-        $isOK = $isFixer && $resultCode < self::STATUS_CODE_MAX_LIMIT_VALUE;
+        $isOK = self::$isFixer && $resultCode < self::STATUS_CODE_MAX_LIMIT_VALUE;
         OutputPrinter::printResult(
             $output,
             $resultCode,
             $cliOutput,
             self::$debug,
             $this->timer->stop(),
-            $isFixer,
+            self::$isFixer,
             self::$parallel,
             $this->getProcessCommand(),
             $this->stopOnFailure,
@@ -84,7 +81,10 @@ abstract class RulezillaCommand extends Command
 
     protected function getConfig(): array
     {
-        return $this->config['commands'][$this->getConfigKey()];
+        /** @var array|null $config */
+        $config = $this->config['commands'][$this->getConfigKey()] ?? [];
+
+        return $config ?? [];
     }
 
     /**
@@ -97,7 +97,8 @@ abstract class RulezillaCommand extends Command
 
             $targets = collect($diffFiles);
         } else {
-            $targets = collect($this->getConfig()['directories']);
+            $commandConfig = $this->getConfig();
+            $targets = count($commandConfig) === 0 ? collect() : collect($this->getConfig()['directories']);
         }
 
         return $targets->map(static fn (string $targetPath): string => sprintf('%s/%s', self::$rootDir, $targetPath))->toArray();
