@@ -4,6 +4,10 @@ parameters:
     checkMissingIterableValueType: false
     treatPhpDocTypesAsCertain: false
     checkGenericClassInNonGenericObjectType: false
+    ignoreErrors:
+        - '#Parameter \#1 \$callback of method Illuminate\\Support\\Collection.*#'
+        - '#Unable to resolve the template type (TValue|TKey).*#'
+
     #strictRules:
         #allRules: true
     excludePaths:
