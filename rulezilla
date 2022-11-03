@@ -4,6 +4,7 @@
 declare(strict_types=1);
 
 use Rulezilla\Commands\DefaultCommand;
+use Rulezilla\Commands\InitCommand;
 use Rulezilla\Commands\Php\Lint;use Rulezilla\Commands\Php\Phpcpd;use Rulezilla\Commands\Php\Phpcs;use Rulezilla\Commands\Php\PhpcsFixer;use Rulezilla\Commands\Php\Phpmnd;use Rulezilla\Commands\Php\Phpstan;use Rulezilla\Commands\Php\Phpunit;use Rulezilla\Commands\Php\Rector;use Rulezilla\Commands\Php\RectorFixer;use Rulezilla\Config\ConfigFacade;
 use Symfony\Component\Console\Application;
 
@@ -41,6 +42,9 @@ $application->addCommands(
         getFixersCommands($config),
         getCheckersCommands($config),
         [new DefaultCommand($config, getFixersCommands($config), getCheckersCommands($config))],
+        [
+            new InitCommand(),
+        ],
     ),
 );
 $application->setDefaultCommand('run');

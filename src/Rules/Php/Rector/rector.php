@@ -23,7 +23,6 @@ use Rector\CodeQuality\Rector\If_\CombineIfRector;
 use Rector\CodeQuality\Rector\If_\ConsecutiveNullCompareReturnsToNullCoalesceQueueRector;
 use Rector\CodeQuality\Rector\If_\ShortenElseIfRector;
 use Rector\CodeQuality\Rector\If_\SimplifyIfElseToTernaryRector;
-use Rector\CodeQuality\Rector\If_\SimplifyIfIssetToNullCoalescingRector;
 use Rector\CodeQuality\Rector\If_\SimplifyIfNotNullReturnRector;
 use Rector\CodeQuality\Rector\If_\SimplifyIfNullableReturnRector;
 use Rector\CodeQuality\Rector\LogicalAnd\LogicalToBooleanRector;
@@ -63,7 +62,6 @@ return [
     ShortenElseIfRector::class,
     SimplifyForeachToArrayFilterRector::class,
     SimplifyIfElseToTernaryRector::class,
-    SimplifyIfIssetToNullCoalescingRector::class,
     SimplifyIfNotNullReturnRector::class,
     SimplifyIfNullableReturnRector::class,
     SimplifyTautologyTernaryRector::class,
