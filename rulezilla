@@ -11,7 +11,7 @@ error_reporting(E_ALL);
 
 $baseDir = __DIR__;
 require getcwd() . '/vendor/autoload.php';
-$config = (new ConfigFacade($baseDir))->parseConfig();
+$config = (new ConfigFacade(getcwd()))->parseConfig();
 
     function getCheckersCommands(array $config): array
     {

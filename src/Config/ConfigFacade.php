@@ -7,6 +7,11 @@ namespace Rulezilla\Config;
 use Rulezilla\Exceptions\InvalidConfig;
 use Symfony\Component\Yaml\Yaml;
 
+use function copy;
+use function dirname;
+use function is_file;
+use function sprintf;
+
 final class ConfigFacade
 {
 
@@ -22,6 +27,7 @@ final class ConfigFacade
      */
     public function parseConfig(): array
     {
+        $this->createConfigFile();
         $parsedConfig = Yaml::parseFile(self::CONFIG_DEFAULT_FILE);
 
         if (!is_array($parsedConfig)) {
@@ -31,6 +37,18 @@ final class ConfigFacade
         $parsedConfig['rulezilla']['rootDir'] = $this->rootDir;
 
         return $parsedConfig;
+    }
+
+    private function createConfigFile(): void
+    {
+        $configFile = sprintf('%s/%s', $this->rootDir, self::CONFIG_DEFAULT_FILE);
+        $distConfigFile = dirname(__DIR__) . '/../dist/rulezilla.yaml.dist';
+
+        if (is_file($configFile) || !copy($distConfigFile, $configFile)) {
+            return;
+        }
+
+        echo 'Config file created.';
     }
 
 }
