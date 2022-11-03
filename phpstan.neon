@@ -1,6 +1,8 @@
 includes:
     - %rootDir%/../../../src/Rules/Php/Phpstan/phpstan.neon
 parameters:
+    checkMissingIterableValueType: false
+    treatPhpDocTypesAsCertain: false
     checkGenericClassInNonGenericObjectType: false
     #strictRules:
         #allRules: true
