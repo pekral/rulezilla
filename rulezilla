@@ -10,7 +10,7 @@ use Symfony\Component\Console\Application;
 error_reporting(E_ALL);
 
 $baseDir = __DIR__;
-require $baseDir.'/vendor/autoload.php';
+require getcwd() . '/vendor/autoload.php';
 $config = (new ConfigFacade($baseDir))->parseConfig();
 
     function getCheckersCommands(array $config): array
