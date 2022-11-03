@@ -10,7 +10,6 @@ use Symfony\Component\Console\Application;
 error_reporting(E_ALL);
 
 $baseDir = __DIR__;
-$vendorDirectory = getcwd() . '/' . 'vendor';
 require $baseDir.'/vendor/autoload.php';
 $config = (new ConfigFacade($baseDir))->parseConfig();
 
@@ -45,4 +44,4 @@ $application->addCommands(
     ),
 );
 $application->setDefaultCommand('run');
-return $application->run();
+$application->run();
