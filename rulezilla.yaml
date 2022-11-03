@@ -2,6 +2,7 @@ stopOnFailure: true
 commands:
   phpstan:
     directories: ['src', 'tests']
+    memoryLimit: 4G
     config: phpstan.neon
   phpcs:
     directories: ['src', 'tests']

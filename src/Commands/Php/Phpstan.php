@@ -34,6 +34,10 @@ final class Phpstan extends RulezillaCommand
             $commandParts[] = sprintf('-c %s/%s', self::$rootDir, $this->getConfig()['config']);
         }
 
+        if (isset($this->getConfig()['memoryLimit'])) {
+            $commandParts[] = sprintf('--memory-limit %s', $this->getConfig()['memoryLimit']);
+        }
+
         return implode(' ', $commandParts);
     }
 
