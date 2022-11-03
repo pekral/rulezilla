@@ -27,7 +27,7 @@ final class Phpstan extends RulezillaCommand
         $targets = $this->getTargets();
 
         $commandParts = [
-            sprintf('php %s/vendor/bin/phpstan analyse %s --no-progress', self::$rootDir, implode(' ', $targets)),
+            sprintf('php %s/vendor/bin/phpstan analyse %s --no-progress --xdebug', self::$rootDir, implode(' ', $targets)),
         ];
 
         if (isset($this->getConfig()['config'])) {
