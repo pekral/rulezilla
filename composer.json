@@ -47,5 +47,8 @@
         "src/Rules/Php/Phpstan/extension.neon"
       ]
     }
-  }
+  },
+  "bin": [
+    "rulezilla"
+  ]
 }

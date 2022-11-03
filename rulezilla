@@ -3,10 +3,46 @@
 
 declare(strict_types=1);
 
+use Rulezilla\Commands\DefaultCommand;
+use Rulezilla\Commands\Php\Lint;use Rulezilla\Commands\Php\Phpcpd;use Rulezilla\Commands\Php\Phpcs;use Rulezilla\Commands\Php\PhpcsFixer;use Rulezilla\Commands\Php\Phpmnd;use Rulezilla\Commands\Php\Phpstan;use Rulezilla\Commands\Php\Phpunit;use Rulezilla\Commands\Php\Rector;use Rulezilla\Commands\Php\RectorFixer;use Rulezilla\Config\ConfigFacade;
+use Symfony\Component\Console\Application;
+
+error_reporting(E_ALL);
+
 $baseDir = __DIR__;
-
+$vendorDirectory = getcwd() . '/' . 'vendor';
 require $baseDir.'/vendor/autoload.php';
+$config = (new ConfigFacade($baseDir))->parseConfig();
 
-use Rulezilla\Runner;
+    function getCheckersCommands(array $config): array
+    {
+        return [
+            new Lint($config),
+            new Phpcpd($config),
+            new Phpmnd($config),
+            new Phpcs($config),
+            new Rector($config),
+            new Phpstan($config),
+            new Phpunit($config),
+        ];
+    }
 
-(new Runner($baseDir))->run();
+    function getFixersCommands(array $config): array
+    {
+        return [
+            new RectorFixer($config),
+            new PhpcsFixer($config),
+        ];
+    }
+
+
+$application = new Application('Rulezilla - box of checkers');
+$application->addCommands(
+    array_merge(
+        getFixersCommands($config),
+        getCheckersCommands($config),
+        [new DefaultCommand($config, getFixersCommands($config), getCheckersCommands($config))],
+    ),
+);
+$application->setDefaultCommand('run');
+return $application->run();
