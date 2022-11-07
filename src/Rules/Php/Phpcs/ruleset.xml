@@ -126,8 +126,12 @@
             <property name="maxComplexity" value="10"/>
         </properties>
     </rule>
-    <rule ref="SlevomatCodingStandard.Files.FileLength"/>
-    <rule ref="SlevomatCodingStandard.Classes.ClassLength"/>
+    <rule ref="SlevomatCodingStandard.Files.FileLength">
+        <exclude-pattern>tests/*</exclude-pattern>
+    </rule>
+    <rule ref="SlevomatCodingStandard.Classes.ClassLength">
+        <exclude-pattern>tests/*</exclude-pattern>
+    </rule>
     <rule ref="SlevomatCodingStandard.TypeHints.ParameterTypeHintSpacing"/>
     <rule ref="SlevomatCodingStandard.Classes.PropertyDeclaration"/>
     <rule ref="SlevomatCodingStandard.Namespaces.MultipleUsesPerLine"/>
@@ -186,7 +190,9 @@
     <rule ref="SlevomatCodingStandard.Functions.RequireTrailingCommaInDeclaration"/>
     <rule ref="SlevomatCodingStandard.Classes.RequireConstructorPropertyPromotion"/>
     <rule ref="SlevomatCodingStandard.TypeHints.UnionTypeHintFormat"/>
-    <rule ref="SlevomatCodingStandard.Functions.FunctionLength"/>
+    <rule ref="SlevomatCodingStandard.Functions.FunctionLength">
+        <exclude-pattern>tests/*</exclude-pattern>
+    </rule>
 
     <!-- Enable after refactoring -->
     <exclude name="SlevomatCodingStandard.Commenting.DeprecatedAnnotationDeclaration"/>
