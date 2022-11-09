@@ -127,6 +127,9 @@
         </properties>
     </rule>
     <rule ref="SlevomatCodingStandard.Files.FileLength">
+        <properties>
+            <property name="maxLinesLength" value="1000"/>
+        </properties>
         <exclude-pattern>tests/*</exclude-pattern>
     </rule>
     <rule ref="SlevomatCodingStandard.Classes.ClassLength">
@@ -191,6 +194,9 @@
     <rule ref="SlevomatCodingStandard.Classes.RequireConstructorPropertyPromotion"/>
     <rule ref="SlevomatCodingStandard.TypeHints.UnionTypeHintFormat"/>
     <rule ref="SlevomatCodingStandard.Functions.FunctionLength">
+        <properties>
+            <property name="minLineLength" value="50"/>
+        </properties>
         <exclude-pattern>tests/*</exclude-pattern>
     </rule>
 
