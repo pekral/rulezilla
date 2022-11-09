@@ -195,7 +195,7 @@
     <rule ref="SlevomatCodingStandard.TypeHints.UnionTypeHintFormat"/>
     <rule ref="SlevomatCodingStandard.Functions.FunctionLength">
         <properties>
-            <property name="minLineLength" value="50"/>
+            <property name="maxLinesLength" value="50"/>
         </properties>
         <exclude-pattern>tests/*</exclude-pattern>
     </rule>
