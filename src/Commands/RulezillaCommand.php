@@ -34,7 +34,7 @@ abstract class RulezillaCommand extends Command
     protected static bool $isFastCheck = false;
 
     /**
-     * @var array<\Symfony\Component\Console\Command\Command>
+     * @var array<\Rulezilla\Commands\RulezillaCommand>
      */
     private array $allCommands;
 
@@ -62,7 +62,8 @@ abstract class RulezillaCommand extends Command
         OutputPrinter::printHeader($output, self::$isFixer, self::$parallel, $this->getConfigKey(), self::$isFastCheck);
         $this->timer->start();
         exec($this->getProcessCommand(), $cliOutput, $resultCode);
-        $isOK = self::$isFixer && $resultCode < self::STATUS_CODE_MAX_LIMIT_VALUE;
+        $isFixerOK = self::$isFixer && $resultCode < self::STATUS_CODE_MAX_LIMIT_VALUE;
+        $statusCode = $isFixerOK || $resultCode < self::STATUS_CODE_MAX_LIMIT_VALUE ? Command::SUCCESS : $resultCode;
         OutputPrinter::printResult(
             $output,
             $resultCode,
@@ -73,10 +74,10 @@ abstract class RulezillaCommand extends Command
             self::$parallel,
             $this->getProcessCommand(),
             $this->stopOnFailure,
-            $isOK,
+            $statusCode === Command::SUCCESS,
         );
 
-        return $isOK ? Command::SUCCESS : $resultCode;
+        return $statusCode;
     }
 
     protected function getConfig(): array
@@ -172,15 +173,13 @@ abstract class RulezillaCommand extends Command
 
     protected function executeWithoutStopOnFailure(InputInterface $input, OutputInterface $output): int
     {
-        return $this->getFinalExitCode(collect($this->allCommands)->map(static fn (Command $command): int => $command->execute($input, $output)));
+        return $this->getFinalExitCode(collect($this->allCommands)->map(static fn (RulezillaCommand $command): int => $command->execute($input, $output)));
     }
 
     protected function executeWithStopOnFailure(InputInterface $input, OutputInterface $output): int
     {
-        $isFixer = $this instanceof Fixer;
-
         foreach ($this->allCommands as $command) {
-            if (!$isFixer && $command->execute($input, $output) !== Command::SUCCESS) {
+            if ($command->execute($input, $output) !== Command::SUCCESS) {
                 return Command::FAILURE;
             }
         }
