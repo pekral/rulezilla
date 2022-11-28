@@ -47,4 +47,9 @@ final class RectorFixer extends RulezillaCommand implements Fixer
         return 'rector';
     }
 
+    protected function getValidExitCodes(): array
+    {
+        return [0, 1];
+    }
+
 }

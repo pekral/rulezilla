@@ -22,11 +22,11 @@ final class OutputPrinter
     public const ERROR_MESSAGE = '👿 Oops! There are some errors. I believe you in fixing!';
     public const SUCCESS_MESSAGE = '👍 It`s looks so good! Good work!';
 
-    public static function printResult(SymfonyStyle $output, int $resultCode, array $cliOutput, bool $isDebugMode, Duration $duration, bool $isFixer, bool $parallel, string $processCommand, bool $stopOnFailure, bool $isOK): void
+    public static function printResult(SymfonyStyle $output, int $resultCode, array $cliOutput, bool $isDebugMode, Duration $duration, bool $isFixer, bool $parallel, string $processCommand, bool $isOK): void
     {
         $isSuccess = $resultCode === Command::SUCCESS;
 
-        self::printCliOutput($output, $isSuccess, $isFixer, $parallel, $cliOutput, $duration, $isDebugMode, $stopOnFailure, $isOK);
+        self::printCliOutput($output, $isSuccess, $isFixer, $parallel, $cliOutput, $duration, $isDebugMode, $isOK);
 
         if ((!$isDebugMode && !$isSuccess) || $parallel) {
             return;
@@ -56,7 +56,7 @@ final class OutputPrinter
         return sprintf('[Executing time] %s', $duration->asString());
     }
 
-    private static function printCliOutput(SymfonyStyle $output, bool $isSuccess, bool $isFixer, bool $parallel, array|string $cliOutput, Duration $duration, bool $isDebugMode, bool $stopOnFailure, bool $isOK): void
+    private static function printCliOutput(SymfonyStyle $output, bool $isSuccess, bool $isFixer, bool $parallel, array|string $cliOutput, Duration $duration, bool $isDebugMode, bool $isOK): void
     {
         if ($parallel && !$isFixer && !$isSuccess) {
             self::printRawCliOutput($output, $cliOutput);
@@ -71,7 +71,7 @@ final class OutputPrinter
                 $output->success(sprintf('%s %s', self::SUCCESS_MESSAGE, self::getDurationString($duration)));
             }
 
-            if ($isDebugMode && !$stopOnFailure) {
+            if ($isDebugMode) {
                 self::printRawCliOutput($output, $cliOutput);
             }
 

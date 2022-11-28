@@ -47,4 +47,9 @@ final class PhpcsFixer extends RulezillaCommand implements Fixer
         return 'phpcs';
     }
 
+    protected function getValidExitCodes(): array
+    {
+        return [0, 1];
+    }
+
 }

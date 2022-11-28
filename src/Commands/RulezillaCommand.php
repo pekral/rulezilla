@@ -24,7 +24,7 @@ use function sprintf;
 abstract class RulezillaCommand extends Command
 {
 
-    private const STATUS_CODE_MAX_LIMIT_VALUE = 2;
+    private const SUCCESS_EXIT_CODES = [0];
 
     protected bool $stopOnFailure = true;
     protected Timer $timer;
@@ -55,6 +55,11 @@ abstract class RulezillaCommand extends Command
         $this->stopOnFailure = isset($this->config['stopOnFailure']) && (bool) $this->config['stopOnFailure'] === true;
     }
 
+    protected function getValidExitCodes(): array
+    {
+        return self::SUCCESS_EXIT_CODES;
+    }
+
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output = new SymfonyStyle($input, $output);
@@ -62,8 +67,7 @@ abstract class RulezillaCommand extends Command
         OutputPrinter::printHeader($output, self::$isFixer, self::$parallel, $this->getConfigKey(), self::$isFastCheck);
         $this->timer->start();
         exec($this->getProcessCommand(), $cliOutput, $resultCode);
-        $isFixerOK = self::$isFixer && $resultCode < self::STATUS_CODE_MAX_LIMIT_VALUE;
-        $statusCode = $isFixerOK || $resultCode < self::STATUS_CODE_MAX_LIMIT_VALUE ? Command::SUCCESS : $resultCode;
+        $statusCode = in_array($resultCode, $this->getValidExitCodes(), true) ? Command::SUCCESS : Command::FAILURE;
         OutputPrinter::printResult(
             $output,
             $resultCode,
@@ -73,7 +77,6 @@ abstract class RulezillaCommand extends Command
             self::$isFixer,
             self::$parallel,
             $this->getProcessCommand(),
-            $this->stopOnFailure,
             $statusCode === Command::SUCCESS,
         );
 
